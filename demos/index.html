@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Processing → Vue 3 转换器</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      color: #fff;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(90deg, #00d9ff, #00ff88);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    
+    .subtitle {
+      color: #888;
+      font-size: 1.1rem;
+    }
+    
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    
+    .panel {
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .panel-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .badge {
+      background: linear-gradient(90deg, #00d9ff, #00ff88);
+      color: #000;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    textarea {
+      width: 100%;
+      height: 400px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 1rem;
+      color: #fff;
+      font-family: 'Fira Code', 'Consolas', monospace;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      resize: vertical;
+    }
+    
+    textarea:focus {
+      outline: none;
+      border-color: #00d9ff;
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(90deg, #00d9ff, #00ff88);
+      color: #000;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(0,217,255,0.3);
+    }
+    
+    .btn-secondary {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+    
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.2);
+    }
+    
+    .preview-container {
+      background: #000;
+      border-radius: 8px;
+      min-height: 420px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    
+    .preview-placeholder {
+      color: #555;
+      text-align: center;
+    }
+    
+    .preview-placeholder .icon {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .vue-code {
+      height: 400px;
+      overflow: auto;
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    
+    .vue-code pre {
+      font-family: 'Fira Code', 'Consolas', monospace;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    
+    .examples {
+      margin-top: 1.5rem;
+    }
+    
+    .example-btns {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+    
+    .example-btn {
+      background: rgba(0,217,255,0.1);
+      border: 1px solid rgba(0,217,255,0.3);
+      color: #00d9ff;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    
+    .example-btn:hover {
+      background: rgba(0,217,255,0.2);
+    }
+    
+    .copy-toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #00ff88;
+      color: #000;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .copy-toast.show {
+      opacity: 1;
+    }
+    
+    @media (max-width: 900px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="container">
+      <header>
+        <h1>Processing → Vue 3</h1>
+        <p class="subtitle">将Processing代码转换为Vue 3组件，一键迁移创意作品到Web</p>
+      </header>
+      
+      <div class="examples">
+        <div class="panel-title">📚 示例代码</div>
+        <div class="example-btns">
+          <button class="example-btn" @click="loadExample('basic')">基础图形</button>
+          <button class="example-btn" @click="loadExample('animation')">动画效果</button>
+          <button class="example-btn" @click="loadExample('interactive')">交互</button>
+          <button class="example-btn" @click="loadExample('particles')">粒子系统</button>
+        </div>
+      </div>
+      
+      <div class="main-content" style="margin-top: 1.5rem;">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">
+              <span class="badge">Input</span>
+              Processing 代码
+            </span>
+          </div>
+          <textarea 
+            v-model="processingCode" 
+            placeholder="粘贴你的Processing代码..."
+            @input="convert"
+          ></textarea>
+        </div>
+        
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">
+              <span class="badge">Output</span>
+              Vue 3 组件
+            </span>
+            <button class="btn btn-secondary" @click="copyCode" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+              📋 复制代码
+            </button>
+          </div>
+          <div class="vue-code">
+            <pre>{{ vueCode || '// 转换后的Vue代码将显示在这里' }}</pre>
+          </div>
+        </div>
+      </div>
+      
+      <div class="panel" style="margin-top: 1.5rem;">
+        <div class="panel-header">
+          <span class="panel-title">
+            <span class="badge">Preview</span>
+            实时预览
+          </span>
+        </div>
+        <div class="preview-container" ref="previewContainer">
+          <div class="preview-placeholder" v-if="!processingCode.trim()">
+            <div class="icon">🎨</div>
+            <div>输入Processing代码预览效果</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="copy-toast" :class="{ show: showToast }">✅ 代码已复制！</div>
+  </div>
+
+  <script>
+    const { createApp, ref, onMounted, onUnmounted, nextTick } = Vue
+    
+    createApp({
+      setup() {
+        const processingCode = ref('')
+        const vueCode = ref('')
+        const previewContainer = ref(null)
+        const showToast = ref(false)
+        let sketchInstance = null
+        
+        // 示例代码
+        const examples = {
+          basic: `void setup() {
+  size(400, 400);
+}
+
+void draw() {
+  background(0);
+  
+  // 画圆形
+  fill(255, 0, 0);
+  circle(100, 100, 80);
+  
+  // 画矩形
+  fill(0, 255, 0);
+  rect(200, 100, 100, 100);
+  
+  // 画线
+  stroke(0, 0, 255);
+  strokeWeight(3);
+  line(50, 300, 350, 300);
+}`,
+          
+          animation: `float x = 0;
+
+void setup() {
+  size(400, 400);
+}
+
+void draw() {
+  background(0, 30);
+  
+  x = x + 2;
+  if (x > width) x = 0;
+  
+  // 渐变圆
+  noStroke();
+  for (int i = 0; i < 10; i++) {
+    fill(255, 100 + i * 15, 0, 150 - i * 10);
+    circle(x, 200, 80 - i * 5);
+  }
+  
+  // 文字
+  fill(255);
+  textSize(16);
+  text("frame: " + frameCount, 10, 30);
+}`,
+          
+          interactive: `float circleX, circleY;
+
+void setup() {
+  size(400, 400);
+  circleX = width / 2;
+  circleY = height / 2;
+}
+
+void draw() {
+  background(0);
+  
+  // 跟随鼠标
+  circleX = lerp(circleX, mouseX, 0.1);
+  circleY = lerp(circleY, mouseY, 0.1);
+  
+  // 画渐变圆
+  noStroke();
+  for (int i = 5; i > 0; i--) {
+    float alpha = map(i, 5, 0, 50, 255);
+    fill(0, 200, 255, alpha);
+    circle(circleX, circleY, i * 30);
+  }
+  
+  // 画十字
+  stroke(255);
+  strokeWeight(1);
+  line(mouseX - 10, mouseY, mouseX + 10, mouseY);
+  line(mouseX, mouseY - 10, mouseX, mouseY + 10);
+}`,
+          
+          particles: `ArrayList<Particle> particles;
+
+void setup() {
+  size(400, 400);
+  particles = new ArrayList();
+}
+
+void draw() {
+  background(0, 20);
+  
+  // 添加新粒子
+  if (frameCount % 5 == 0) {
+    particles.add(new Particle(width/2, height/2));
+  }
+  
+  // 更新和绘制
+  for (int i = particles.size() - 1; i >= 0; i--) {
+    Particle p = particles.get(i);
+    p.update();
+    p.display();
+    if (p.isDead()) {
+      particles.remove(i);
+    }
+  }
+  
+  textSize(12);
+  fill(255);
+  text("particles: " + particles.size(), 10, 20);
+}
+
+class Particle {
+  PVector pos, vel, acc;
+  float lifespan;
+  
+  Particle(float x, float y) {
+    pos = new PVector(x, y);
+    vel = PVector.random2D();
+    vel.mult(random(1, 3));
+    acc = new PVector(0, 0);
+    lifespan = 255;
+  }
+  
+  void update() {
+    vel.add(acc);
+    pos.add(vel);
+    acc.mult(0);
+    lifespan -= 2;
+  }
+  
+  void display() {
+    noStroke();
+    fill(255, 150, 50, lifespan);
+    circle(pos.x, pos.y, 8);
+  }
+  
+  boolean isDead() {
+    return lifespan < 0;
+  }
+}`
+        }
+        
+        // 加载示例
+        const loadExample = (name) => {
+          processingCode.value = examples[name] || ''
+          convert()
+        }
+        
+        // 关键字映射
+        const keywordMap = {
+          'void': 'function',
+          'setup': 'p.setup',
+          'draw': 'p.draw',
+          'size(': 'p.createCanvas(',
+          'width': 'p.width',
+          'height': 'p.height',
+          'mouseX': 'p.mouseX',
+          'mouseY': 'p.mouseY',
+          'frameCount': 'p.frameCount',
+          'random': 'p.random',
+          'lerp': 'p.lerp',
+          'map': 'p.map',
+          'sin': 'p.sin',
+          'cos': 'p.cos',
+          'abs': 'p.abs',
+          'floor': 'p.floor',
+          'PI': 'p.PI',
+          'TWO_PI': 'p.TWO_PI',
+          'print(': 'p.print(',
+        }
+        
+        // 转换函数
+        const convert = () => {
+          const code = processingCode.value
+          
+          if (!code.trim()) {
+            vueCode.value = ''
+            return
+          }
+          
+          // 移除注释
+          let cleanCode = code.replace(/\/\/.*$/gm, '')
+          
+          // 提取size
+          const sizeMatch = cleanCode.match(/size\s*\(\s*(\d+)\s*,\s*(\d+)\s*[,\)]/)
+          const width = sizeMatch ? sizeMatch[1] : 400
+          const height = sizeMatch ? sizeMatch[2] : 400
+          
+          // 提取全局变量
+          const globalVars = []
+          const varPattern = /(int|float|boolean|String|color|ArrayList|PVector)\s+(\w+)/g
+          let varMatch
+          while ((varMatch = varPattern.exec(cleanCode)) !== null) {
+            globalVars.push(`${varMatch[1]} ${varMatch[2]} = ${getDefaultValue(varMatch[1])}`)
+          }
+          
+          // 替换关键字
+          let jsCode = cleanCode
+          for (const [proc, js] of Object.entries(keywordMap)) {
+            jsCode = jsCode.replace(new RegExp(`\\b${proc.replace('(', '\\(')}\\b`, 'g'), js)
+          }
+          
+          // 提取setup和draw
+          const setupMatch = jsCode.match(/p\.setup\s*=\s*\(\)\s*=>\s*\{([\s\S]*?)\n\s*\}\s*;/)
+          const drawMatch = jsCode.match(/p\.draw\s*=\s*\(\)\s*=>\s*\{([\s\S]*?)\n\s*\}\s*;/)
+          
+          const setupBody = setupMatch ? setupMatch[1].replace(/p\.createCanvas\([^)]+\);?\s*/, '').trim() : ''
+          const drawBody = drawMatch ? drawMatch[1].trim() : ''
+          
+          // 生成Vue代码
+          vueCode.value = `<template>
+  <div class="processing-wrapper">
+    <div ref="canvasContainer"></div>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
+import p5 from 'p5'
+
+const canvasContainer = ref(null)
+let sketchInstance = null
+
+// 全局变量
+${globalVars.join('\n')}
+
+const sketch = (p) => {
+  p.setup = () => {
+    p.createCanvas(${width}, ${height})
+    ${setupBody}
+  }
+
+  p.draw = () => {
+    ${drawBody}
+  }
+}
+
+onMounted(() => {
+  if (canvasContainer.value) {
+    sketchInstance = new p5(sketch, canvasContainer.value)
+  }
+})
+
+onUnmounted(() => {
+  if (sketchInstance) {
+    sketchInstance.remove()
+    sketchInstance = null
+  }
+})
+</script>
+
+<style scoped>
+.processing-wrapper {
+  width: ${width}px;
+  height: ${height}px;
+}
+.processing-wrapper canvas {
+  display: block;
+}
+</style>`
+          
+          // 更新预览
+          updatePreview()
+        }
+        
+        const getDefaultValue = (type) => {
+          const defaults = {
+            'int': '0',
+            'float': '0.0',
+            'boolean': 'false',
+            'String': '""',
+            'color': 'color(255)',
+            'ArrayList': 'new ArrayList()',
+            'PVector': 'new PVector(0, 0)'
+          }
+          return defaults[type] || 'null'
+        }
+        
+        // 更新预览
+        const updatePreview = () => {
+          // 移除旧sketch
+          if (sketchInstance) {
+            sketchInstance.remove()
+            sketchInstance = null
+          }
+          
+          const container = previewContainer.value
+          if (!container || !processingCode.value.trim()) return
+          
+          const code = processingCode.value
+          const sizeMatch = code.match(/size\s*\(\s*(\d+)\s*,\s*(\d+)\s*[,\)]/)
+          const w = sizeMatch ? parseInt(sizeMatch[1]) : 400
+          const h = sizeMatch ? parseInt(sizeMatch[2]) : 400
+          
+          // 替换关键字
+          let jsCode = code.replace(/\/\/.*$/gm, '')
+          for (const [proc, js] of Object.entries(keywordMap)) {
+            jsCode = jsCode.replace(new RegExp(`\\b${proc.replace('(', '\\(')}\\b`, 'g'), js)
+          }
+          
+          // 提取函数
+          const setupMatch = jsCode.match(/void\s+setup\s*\(\)\s*\{([\s\S]*?)\n\}/)
+          const drawMatch = jsCode.match(/void\s+draw\s*\(\)\s*\{([\s\S]*?)\n\}/)
+          
+          const sketchFn = (p) => {
+            p.setup = () => {
+              p.createCanvas(w, h)
+              if (setupMatch) {
+                const body = setupMatch[1]
+                  .replace(/p\.createCanvas\([^)]+\);?\s*/, '')
+                  .replace(/fill\(/g, 'p.fill(')
+                  .replace(/stroke\(/g, 'p.stroke(')
+                  .replace(/noFill\(/g, 'p.noFill(')
+                  .replace(/noStroke\(/g, 'p.noStroke(')
+                  .replace(/circle\(/g, 'p.circle(')
+                  .replace(/rect\(/g, 'p.rect(')
+                  .replace(/ellipse\(/g, 'p.ellipse(')
+                  .replace(/line\(/g, 'p.line(')
+                  .replace(/point\(/g, 'p.point(')
+                  .replace(/text\(/g, 'p.text(')
+                  .replace(/background\(/g, 'p.background(')
+                  .replace(/strokeWeight\(/g, 'p.strokeWeight(')
+                  .replace(/textSize\(/g, 'p.textSize(')
+                  .replace(/textAlign\(/g, 'p.textAlign(')
+                  .replace(/lerp\(/g, 'p.lerp(')
+                eval(body)
+              }
+            }
+            
+            p.draw = () => {
+              if (drawMatch) {
+                const body = drawMatch[1]
+                  .replace(/fill\(/g, 'p.fill(')
+                  .replace(/stroke\(/g, 'p.stroke(')
+                  .replace(/noFill\(/g, 'p.noFill(')
+                  .replace(/noStroke\(/g, 'p.noStroke(')
+                  .replace(/circle\(/g, 'p.circle(')
+                  .replace(/rect\(/g, 'p.rect(')
+                  .replace(/ellipse\(/g, 'p.ellipse(')
+                  .replace(/line\(/g, 'p.line(')
+                  .replace(/point\(/g, 'p.point(')
+                  .replace(/text\(/g, 'p.text(')
+                  .replace(/background\(/g, 'p.background(')
+                  .replace(/strokeWeight\(/g, 'p.strokeWeight(')
+                  .replace(/textSize\(/g, 'p.textSize(')
+                  .replace(/textAlign\(/g, 'p.textAlign(')
+                  .replace(/lerp\(/g, 'p.lerp(')
+                  .replace(/map\(/g, 'p.map(')
+                  .replace(/random\(/g, 'p.random(')
+                  .replace(/sin\(/g, 'p.sin(')
+                  .replace(/cos\(/g, 'p.cos(')
+                  .replace(/abs\(/g, 'p.abs(')
+                  .replace(/floor\(/g, 'p.floor(')
+                eval(body)
+              }
+            }
+          }
+          
+          sketchInstance = new p5(sketchFn, container)
+        }
+        
+        // 复制代码
+        const copyCode = () => {
+          navigator.clipboard.writeText(vueCode.value).then(() => {
+            showToast.value = true
+            setTimeout(() => {
+              showToast.value = false
+            }, 2000)
+          })
+        }
+        
+        return {
+          processingCode,
+          vueCode,
+          previewContainer,
+          showToast,
+          loadExample,
+          convert,
+          copyCode
+        }
+      }
+    }).mount('#app')
+  </script>
+</body>
+</html>

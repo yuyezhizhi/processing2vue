@@ -1,0 +1,27 @@
+{
+  "name": "processing2vue",
+  "version": "1.0.0",
+  "description": "Convert Processing code to Vue 3 components with p5.js",
+  "type": "module",
+  "main": "dist/processing2vue.cjs.js",
+  "module": "dist/processing2vue.esm.js",
+  "exports": {
+    ".": {
+      "import": "./dist/processing2vue.esm.js",
+      "require": "./dist/processing2vue.cjs.js"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": ["processing", "vue", "p5.js", "converter"],
+  "license": "Apache-2.0",
+  "dependencies": {
+    "p5": "^1.9.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}

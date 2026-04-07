@@ -182,6 +182,25 @@ ${classBody}
 }
 
 /**
+ * 提取图片加载调用
+ */
+function extractImageLoads(code) {
+  const imageLoads = []
+  // 匹配 loadImage("filename") 或 loadImage('filename')
+  const imagePattern = /loadImage\s*\(\s*['"]([^'"]+)['"]\s*\)/g
+  let match
+
+  while ((match = imagePattern.exec(code)) !== null) {
+    imageLoads.push({
+      variableName: '', // 需要从上下文中推断
+      filename: match[1],
+    })
+  }
+
+  return imageLoads
+}
+
+/**
  * 解析Processing代码结构
  */
 export function parse(code) {
@@ -200,6 +219,9 @@ export function parse(code) {
 
   // 提取类定义
   const classes = extractClasses(cleanCode)
+
+  // 提取图片加载调用
+  const imageLoads = extractImageLoads(cleanCode)
 
   // 提取各个函数块
   const functions = {}
@@ -230,6 +252,7 @@ export function parse(code) {
     height,
     globalVars,
     classes,
+    imageLoads,
     functions,
     originalCode: code,
   }
@@ -240,7 +263,7 @@ export function parse(code) {
  */
 export function generate(parsed, options = {}) {
   const opts = { ...defaultOptions, ...options }
-  const { width, height, globalVars, classes, functions } = parsed
+  const { width, height, globalVars, classes, imageLoads, functions } = parsed
 
   // 处理全局变量
   const globalVarNames = globalVars.map(v => {
@@ -251,13 +274,32 @@ export function generate(parsed, options = {}) {
   // 转换类定义
   const classDefinitions = transformClasses(classes)
 
+  // 生成图片加载变量声明
+  let imageVars = ''
+  let imageLoadLogic = ''
+  if (imageLoads.length > 0) {
+    imageVars = '\n// 图片变量\n' + imageLoads.map((img, idx) => {
+      const varName = `img${idx}`
+      return `let ${varName} = null`
+    }).join('\n')
+
+    imageLoadLogic = '\n    // 加载图片\n' + imageLoads.map((img, idx) => {
+      const varName = `img${idx}`
+      return `    ${varName} = p.loadImage('${img.filename}')`
+    }).join('\n')
+  }
+
   // 生成setup函数体
-  let setupBody = `p.createCanvas(${width}, ${height});\n`
+  let setupBody = `p.createCanvas(${width}, ${height});${imageLoadLogic}\n`
   if (functions.setup) {
+    // 移除 setup 中的 loadImage 调用，因为已经在 imageLoadLogic 中处理了
     const setupLines = functions.setup.body.split('\n')
       .filter(line => !line.trim().startsWith('size'))
+      .filter(line => !line.trim().includes('loadImage'))  // 过滤掉 loadImage
       .join('\n      ')
-    setupBody += '    ' + transformFunctionName(setupLines)
+    if (setupLines.trim()) {
+      setupBody += '    ' + transformFunctionName(setupLines)
+    }
   }
 
   // 生成draw函数体
@@ -299,6 +341,9 @@ ${globalVars.join('\n')}
 
 // 类定义
 ${classDefinitions}
+
+// 图片变量
+${imageVars}
 
 const sketch = (p) => {
   // Setup

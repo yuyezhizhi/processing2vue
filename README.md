@@ -375,6 +375,12 @@ processing2vue/
 
 ---
 
+## ⭐ Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=yuyezhizhi/processing2vue&type=Date)](https://star-history.com/#yuyezhizhi/processing2vue&Date)
+
+---
+
 <div align="center">
 
 **⭐ 如果这个项目对你有帮助，请给个 Star！**

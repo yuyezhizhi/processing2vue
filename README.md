@@ -332,11 +332,18 @@ processing2vue/
 - [ ] 字体加载支持 (`loadFont()`, `textFont()`)
 - [ ] 声音支持 (p5.sound)
 - [ ] 3D 模式支持 (WEBGL)
-- [ ] 交互事件支持 (keyPressed, mousePressed 等)
-- [ ] 类 (class) 支持
-- [ ] 文件夹批量转换
-- [ ] TypeScript 支持
-- [ ] 更多 p5.js 特性
+- [ ] 类 (class) 完整支持（基础语法已支持）
+
+## ✅ 已完成
+
+- ✅ 30+ 图形、颜色、坐标变换函数
+- ✅ 交互事件支持 (mousePressed, keyPressed 等)
+- ✅ 批量转换功能 (CLI `--batch` 模式)
+- ✅ TypeScript 类型定义
+- ✅ 完整的文档和示例
+- ✅ CLI 工具 (p2v 命令)
+- ✅ npm 包发布
+- ✅ GitHub Actions 自动发布
 
 ---
 

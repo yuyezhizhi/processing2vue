@@ -241,6 +241,14 @@ onUnmounted(() => {
 | `textLeading(leading)` | `textLeading()` | ✅ |
 | `textWidth(str)` | `textWidth()` | ✅ |
 
+### 图像
+
+| Processing | p5.js | 状态 |
+|-----------|-------|------|
+| `image(img, x, y)` | `image()` | ✅ |
+| `imageMode()` | `imageMode()` | ✅ |
+| `loadImage(filename)` | `loadImage()` | ✅ |
+
 ### 流程控制
 
 | Processing | 状态 |
@@ -328,17 +336,18 @@ processing2vue/
 
 ## 🔜 规划中
 
-- [ ] 图像加载支持 (`loadImage()`)
 - [ ] 字体加载支持 (`loadFont()`, `textFont()`)
 - [ ] 声音支持 (p5.sound)
 - [ ] 3D 模式支持 (WEBGL)
-- [ ] 类 (class) 完整支持（基础语法已支持）
+- [ ] 类完整支持（基础语法已支持）
 
 ## ✅ 已完成
 
 - ✅ 30+ 图形、颜色、坐标变换函数
 - ✅ 交互事件支持 (mousePressed, keyPressed 等)
 - ✅ 批量转换功能 (CLI `--batch` 模式)
+- ✅ **类完整支持** - 支持 Processing 类定义转换
+- ✅ **图像加载支持** - 支持 loadImage() 函数
 - ✅ TypeScript 类型定义
 - ✅ 完整的文档和示例
 - ✅ CLI 工具 (p2v 命令)

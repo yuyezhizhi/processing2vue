@@ -37,6 +37,10 @@ export interface ParsedCode {
   height: number
   /** 全局变量声明 */
   globalVars: string[]
+  /** 类定义 */
+  classes: ClassDefinition[]
+  /** 图片加载调用 */
+  imageLoads: ImageLoad[]
   /** 函数映射 */
   functions: {
     [key: string]: {
@@ -48,6 +52,24 @@ export interface ParsedCode {
   }
   /** 原始代码 */
   originalCode: string
+}
+
+/**
+ * 类定义
+ */
+export interface ClassDefinition {
+  /** 类名 */
+  name: string
+  /** 类体 */
+  body: string
+}
+
+/**
+ * 图片加载调用
+ */
+export interface ImageLoad {
+  /** 图片文件名 */
+  filename: string
 }
 
 /**

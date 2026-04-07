@@ -360,11 +360,20 @@ processing2vue/
 
 ---
 
+## 📚 更多文档
+
+- [更新日志](./CHANGELOG.md) - 查看版本更新历史
+- [贡献指南](./CONTRIBUTING.md) - 如何参与贡献
+- [安全策略](./SECURITY.md) - 安全漏洞报告流程
+- [许可证](./LICENSE) - Apache License 2.0
+
 ## 🙏 致谢
 
 - [p5.js](https://p5js.org/) - 优秀的创意编程库
 - [Processing](https://processing.org/) - 开创性的创意编程环境
 - [Vue.js](https://vuejs.org/) - 渐进式 JavaScript 框架
+- [Vite](https://vitejs.dev/) - 下一代前端构建工具
+- [Vitest](https://vitest.dev/) - 极速的单元测试框架
 
 ---
 

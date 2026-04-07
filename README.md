@@ -6,6 +6,11 @@
 
 [![npm version](https://badge.fury.io/js/processing2vue.svg)](https://www.npmjs.com/package/processing2vue)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](./LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/yuyezhizhi/processing2vue?style=social)](https://github.com/yuyezhizhi/processing2vue/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/yuyezhizhi/processing2vue?style=social)](https://github.com/yuyezhizhi/processing2vue/network/members)
+[![GitHub issues](https://img.shields.io/github/issues/yuyezhizhi/processing2vue)](https://github.com/yuyezhizhi/processing2vue/issues)
+[![GitHub license](https://img.shields.io/github/license/yuyezhizhi/processing2vue)](https://github.com/yuyezhizhi/processing2vue/blob/main/LICENSE)
+[![Node.js Version](https://img.shields.io/node/v/processing2vue)](https://github.com/yuyezhizhi/processing2vue)
 
 [在线体验](https://processing2vue.vercel.app/) | [Demo 预览](./demos/index.html)
 

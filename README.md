@@ -240,6 +240,8 @@ onUnmounted(() => {
 | `textAlign(align)` | `textAlign()` | ✅ |
 | `textLeading(leading)` | `textLeading()` | ✅ |
 | `textWidth(str)` | `textWidth()` | ✅ |
+| `loadFont(filename)` | `loadFont()` | ✅ |
+| `textFont(font)` | `textFont()` | ✅ |
 
 ### 图像
 
@@ -336,7 +338,6 @@ processing2vue/
 
 ## 🔜 规划中
 
-- [ ] 字体加载支持 (`loadFont()`, `textFont()`)
 - [ ] 声音支持 (p5.sound)
 - [ ] 3D 模式支持 (WEBGL)
 - [ ] 类完整支持（基础语法已支持）
@@ -348,6 +349,7 @@ processing2vue/
 - ✅ 批量转换功能 (CLI `--batch` 模式)
 - ✅ **类完整支持** - 支持 Processing 类定义转换
 - ✅ **图像加载支持** - 支持 loadImage() 函数
+- ✅ **字体加载支持** - 支持 loadFont() 和 textFont() 函数
 - ✅ TypeScript 类型定义
 - ✅ 完整的文档和示例
 - ✅ CLI 工具 (p2v 命令)

@@ -41,6 +41,8 @@ export interface ParsedCode {
   classes: ClassDefinition[]
   /** 图片加载调用 */
   imageLoads: ImageLoad[]
+  /** 字体加载调用 */
+  fontLoads: FontLoad[]
   /** 函数映射 */
   functions: {
     [key: string]: {
@@ -69,6 +71,14 @@ export interface ClassDefinition {
  */
 export interface ImageLoad {
   /** 图片文件名 */
+  filename: string
+}
+
+/**
+ * 字体加载调用
+ */
+export interface FontLoad {
+  /** 字体文件名 */
   filename: string
 }
 

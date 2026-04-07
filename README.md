@@ -1,8 +1,17 @@
+<div align="center">
+
 # Processing2Vue
 
-🎨 将 Processing 代码转换为 Vue 3 组件，让创意作品无缝迁移到 Web
+**🎨 将 Processing 代码转换为 Vue 3 组件，让创意作品无缝迁移到 Web**
+
+[![npm version](https://badge.fury.io/js/processing2vue.svg)](https://www.npmjs.com/package/processing2vue)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](./LICENSE)
 
 [在线体验](https://processing2vue.vercel.app/) | [Demo 预览](./demos/index.html)
+
+</div>
+
+---
 
 ## ✨ 特性
 
@@ -10,15 +19,14 @@
 - ⚡ **实时预览** - 边写边看效果
 - 🎯 **p5.js 驱动** - 基于成熟的 p5.js 库
 - 📦 **零配置** - 开箱即用，无需复杂设置
-- 📦 **npm 发布** - 方便集成到你的项目
+- 🎨 **完整支持** - 图形、颜色、坐标变换、动画等
+- 📦 **npm 包** - 方便集成到你的项目
+
+---
 
 ## 🚀 快速开始
 
-### 在线使用
-
-直接打开 [demos/index.html](./demos/index.html) 或访问在线版本
-
-### 命令行使用
+### 方式一：命令行使用
 
 ```bash
 # 安装
@@ -27,11 +35,28 @@ npm install -g processing2vue
 # 转换单个文件
 p2v input.pde output.vue
 
-# 或直接转换
+# 或直接转换（自动命名）
 p2v input.pde
 ```
 
-### 编程使用
+### 方式二：在 Vue 项目中使用
+
+```bash
+# 安装
+npm install p5 processing2vue
+```
+
+```vue
+<template>
+  <MyProcessingSketch />
+</template>
+
+<script setup>
+import MyProcessingSketch from './MyProcessingSketch.vue'
+</script>
+```
+
+### 方式三：编程方式
 
 ```javascript
 import { convert } from 'processing2vue'
@@ -51,6 +76,8 @@ const vueComponent = convert(processingCode)
 console.log(vueComponent)
 ```
 
+---
+
 ## 📖 使用示例
 
 ### 输入 Processing 代码
@@ -64,7 +91,7 @@ void setup() {
 void draw() {
   // 跟随鼠标的渐变圆
   background(0, 20);
-  
+
   for (int i = 5; i > 0; i--) {
     fill(0, 200, 255, 50);
     circle(mouseX, mouseY, i * 30);
@@ -96,7 +123,7 @@ const sketch = (p) => {
 
   p.draw = () => {
     p.background(0, 20)
-    
+
     for (let i = 5; i > 0; i--) {
       p.fill(0, 200, 255, 50)
       p.circle(p.mouseX, p.mouseY, i * 30)
@@ -129,112 +156,120 @@ onUnmounted(() => {
 </style>
 ```
 
-## 🔧 支持的 Processing 语法
+---
+
+## 🎯 支持的 Processing 语法
 
 ### 图形绘制
 
-| Processing | p5.js |
-|-----------|-------|
-| `circle(x, y, r)` | ✅ |
-| `ellipse(x, y, w, h)` | ✅ |
-| `rect(x, y, w, h)` | ✅ |
-| `line(x1, y1, x2, y2)` | ✅ |
-| `point(x, y)` | ✅ |
-| `triangle(x1, y1, x2, y2, x3, y3)` | ✅ |
-| `arc(x, y, w, h, start, stop)` | ✅ |
-| `bezier(...)` | ✅ |
+| Processing | p5.js | 状态 |
+|-----------|-------|------|
+| `circle(x, y, r)` | `circle()` | ✅ |
+| `ellipse(x, y, w, h)` | `ellipse()` | ✅ |
+| `rect(x, y, w, h)` | `rect()` | ✅ |
+| `line(x1, y1, x2, y2)` | `line()` | ✅ |
+| `point(x, y)` | `point()` | ✅ |
+| `triangle(x1, y1, x2, y2, x3, y3)` | `triangle()` | ✅ |
+| `arc(x, y, w, h, start, stop)` | `arc()` | ✅ |
+| `bezier(...)` | `bezier()` | ✅ |
+| `quad(...)` | `quad()` | ✅ |
+| `beginShape()`, `vertex()`, `endShape()` | `beginShape()`, `vertex()`, `endShape()` | ✅ |
 
 ### 颜色和样式
 
-| Processing | p5.js |
-|-----------|-------|
-| `fill(r, g, b)` | ✅ |
-| `stroke(r, g, b)` | ✅ |
-| `noFill()` | ✅ |
-| `noStroke()` | ✅ |
-| `background(r, g, b)` | ✅ |
-| `strokeWeight(w)` | ✅ |
+| Processing | p5.js | 状态 |
+|-----------|-------|------|
+| `fill(r, g, b)` | `fill()` | ✅ |
+| `stroke(r, g, b)` | `stroke()` | ✅ |
+| `noFill()` | `noFill()` | ✅ |
+| `noStroke()` | `noStroke()` | ✅ |
+| `background(r, g, b)` | `background()` | ✅ |
+| `strokeWeight(w)` | `strokeWeight()` | ✅ |
+| `colorMode()` | `colorMode()` | ✅ |
 
 ### 坐标变换
 
-| Processing | p5.js |
-|-----------|-------|
-| `translate(x, y)` | ✅ |
-| `rotate(angle)` | ✅ |
-| `scale(s)` | ✅ |
-| `push()` | ✅ |
-| `pop()` | ✅ |
+| Processing | p5.js | 状态 |
+|-----------|-------|------|
+| `translate(x, y)` | `translate()` | ✅ |
+| `rotate(angle)` | `rotate()` | ✅ |
+| `scale(s)` | `scale()` | ✅ |
+| `push()` | `push()` | ✅ |
+| `pop()` | `pop()` | ✅ |
+| `resetMatrix()` | `resetMatrix()` | ✅ |
 
 ### 变量和常量
 
-| Processing | p5.js |
-|-----------|-------|
-| `width` | ✅ |
-| `height` | ✅ |
-| `mouseX` | ✅ |
-| `mouseY` | ✅ |
-| `frameCount` | ✅ |
-| `frameRate` | ✅ |
-| `PI`, `TWO_PI` | ✅ |
+| Processing | p5.js | 状态 |
+|-----------|-------|------|
+| `width` | `width` | ✅ |
+| `height` | `height` | ✅ |
+| `mouseX` | `mouseX` | ✅ |
+| `mouseY` | `mouseY` | ✅ |
+| `pmouseX` | `pmouseX` | ✅ |
+| `pmouseY` | `pmouseY` | ✅ |
+| `frameCount` | `frameCount` | ✅ |
+| `frameRate` | `frameRate()` | ✅ |
+| `PI`, `TWO_PI`, `HALF_PI` | `PI`, `TWO_PI`, `HALF_PI` | ✅ |
 
 ### 数学函数
 
-| Processing | p5.js |
-|-----------|-------|
-| `random()` | ✅ |
-| `map()` | ✅ |
-| `sin()`, `cos()`, `tan()` | ✅ |
-| `abs()`, `floor()`, `ceil()` | ✅ |
-| `dist()` | ✅ |
-| `lerp()` | ✅ |
+| Processing | p5.js | 状态 |
+|-----------|-------|------|
+| `random()` | `random()` | ✅ |
+| `randomSeed()` | `randomSeed()` | ✅ |
+| `noise()` | `noise()` | ✅ |
+| `map()` | `map()` | ✅ |
+| `sin()`, `cos()`, `tan()` | `sin()`, `cos()`, `tan()` | ✅ |
+| `abs()`, `floor()`, `ceil()` | `abs()`, `floor()`, `ceil()` | ✅ |
+| `dist()` | `dist()` | ✅ |
+| `lerp()` | `lerp()` | ✅ |
+| `constrain()` | `constrain()` | ✅ |
 
 ### 文本
 
-| Processing | p5.js |
-|-----------|-------|
-| `text(str, x, y)` | ✅ |
-| `textSize(s)` | ✅ |
-| `textAlign(align)` | ✅ |
-| `loadFont()` | 🔜 规划中 |
-| `textFont()` | 🔜 规划中 |
+| Processing | p5.js | 状态 |
+|-----------|-------|------|
+| `text(str, x, y)` | `text()` | ✅ |
+| `textSize(s)` | `textSize()` | ✅ |
+| `textAlign(align)` | `textAlign()` | ✅ |
+| `textLeading(leading)` | `textLeading()` | ✅ |
+| `textWidth(str)` | `textWidth()` | ✅ |
 
-## 📦 在 Vue 项目中使用
+### 流程控制
 
-### 1. 安装依赖
+| Processing | 状态 |
+|-----------|------|
+| `if`, `else` | ✅ |
+| `for`, `while` | ✅ |
+| `switch`, `case` | ✅ |
+| `break`, `continue` | ✅ |
 
-```bash
-npm install p5
-npm install processing2vue
-```
+---
 
-### 2. 在 Vue 组件中使用
-
-```vue
-<template>
-  <MyProcessingSketch />
-</template>
-
-<script setup>
-import MyProcessingSketch from './MyProcessingSketch.vue'
-</script>
-```
-
-## 🛠️ API
+## 🛠️ API 文档
 
 ### `convert(code, options)`
 
 将 Processing 代码转换为 Vue 组件。
 
 **参数：**
-- `code` (string): Processing 代码
-- `options` (object): 可选配置
 
-**选项：**
-- `useP5` (boolean): 使用 p5.js，默认 true
-- `compositionApi` (boolean): 使用 Composition API，默认 true
-- `scoped` (boolean): 使用 scoped 样式，默认 true
-- `width` (number): 画布宽度，默认 400
-- `height` (number): 画布高度，默认 400
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `code` | string | ✅ | Processing 代码 |
+| `options` | object | ❌ | 可选配置 |
+
+**options 配置项：**
+
+| 选项 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `useP5` | boolean | true | 使用 p5.js |
+| `compositionApi` | boolean | true | 使用 Composition API |
+| `scoped` | boolean | true | 使用 scoped 样式 |
+| `width` | number | 400 | 画布宽度 |
+| `height` | number | 400 | 画布高度 |
+| `p5Instance` | string | 'sketchInstance' | p5 实例变量名 |
 
 **返回：** Vue 组件代码字符串
 
@@ -246,21 +281,102 @@ import MyProcessingSketch from './MyProcessingSketch.vue'
 
 从 AST 生成 Vue 组件。
 
+---
+
+## 🧪 开发指南
+
+### 本地开发
+
+```bash
+# 克隆仓库
+git clone https://github.com/yuyezhizhi/processing2vue.git
+cd processing2vue
+
+# 安装依赖
+npm install
+
+# 运行开发服务器
+npm run dev
+
+# 运行测试
+npm test
+
+# 构建
+npm run build
+```
+
+### 项目结构
+
+```
+processing2vue/
+├── src/
+│   ├── parser/          # 语法解析
+│   ├── transformer/     # 代码转换
+│   ├── generator/       # Vue 生成
+│   └── index.ts         # 主入口
+├── demos/               # 示例
+├── tests/               # 测试
+└── package.json
+```
+
+---
+
 ## 🔜 规划中
 
-- [ ] 图像加载支持
-- [ ] 字体加载支持
+- [ ] 图像加载支持 (`loadImage()`)
+- [ ] 字体加载支持 (`loadFont()`, `textFont()`)
 - [ ] 声音支持 (p5.sound)
-- [ ] 3D 模式支持
+- [ ] 3D 模式支持 (WEBGL)
 - [ ] 交互事件支持 (keyPressed, mousePressed 等)
 - [ ] 类 (class) 支持
 - [ ] 文件夹批量转换
+- [ ] TypeScript 支持
+- [ ] 更多 p5.js 特性
+
+---
+
+## 🤝 贡献指南
+
+欢迎贡献！请遵循以下步骤：
+
+1. Fork 本仓库
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 提交 Pull Request
+
+### 代码规范
+
+- 使用 TypeScript
+- 遵循 ESLint 规则
+- 添加适当的测试
+- 更新文档
+
+---
 
 ## 📄 许可证
 
-Apache License 2.0 - 详见 [LICENSE](./LICENSE)
+[Apache License 2.0](./LICENSE)
+
+---
 
 ## 🙏 致谢
 
 - [p5.js](https://p5js.org/) - 优秀的创意编程库
 - [Processing](https://processing.org/) - 开创性的创意编程环境
+- [Vue.js](https://vuejs.org/) - 渐进式 JavaScript 框架
+
+---
+
+## 📮 联系方式
+
+- 作者：[yuyezhizhi](https://github.com/yuyezhizhi)
+- 问题反馈：[Issues](https://github.com/yuyezhizhi/processing2vue/issues)
+
+---
+
+<div align="center">
+
+**⭐ 如果这个项目对你有帮助，请给个 Star！**
+
+</div>

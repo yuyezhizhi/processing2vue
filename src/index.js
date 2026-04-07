@@ -201,6 +201,24 @@ function extractImageLoads(code) {
 }
 
 /**
+ * 提取字体加载调用
+ */
+function extractFontLoads(code) {
+  const fontLoads = []
+  // 匹配 loadFont("filename") 或 loadFont('filename')
+  const fontPattern = /loadFont\s*\(\s*['"]([^'"]+)['"]\s*\)/g
+  let match
+
+  while ((match = fontPattern.exec(code)) !== null) {
+    fontLoads.push({
+      filename: match[1],
+    })
+  }
+
+  return fontLoads
+}
+
+/**
  * 解析Processing代码结构
  */
 export function parse(code) {
@@ -222,6 +240,9 @@ export function parse(code) {
 
   // 提取图片加载调用
   const imageLoads = extractImageLoads(cleanCode)
+
+  // 提取字体加载调用
+  const fontLoads = extractFontLoads(cleanCode)
 
   // 提取各个函数块
   const functions = {}
@@ -253,6 +274,7 @@ export function parse(code) {
     globalVars,
     classes,
     imageLoads,
+    fontLoads,
     functions,
     originalCode: code,
   }
@@ -263,7 +285,7 @@ export function parse(code) {
  */
 export function generate(parsed, options = {}) {
   const opts = { ...defaultOptions, ...options }
-  const { width, height, globalVars, classes, imageLoads, functions } = parsed
+  const { width, height, globalVars, classes, imageLoads, fontLoads, functions } = parsed
 
   // 处理全局变量
   const globalVarNames = globalVars.map(v => {
@@ -289,13 +311,29 @@ export function generate(parsed, options = {}) {
     }).join('\n')
   }
 
+  // 生成字体加载变量声明
+  let fontVars = ''
+  let fontLoadLogic = ''
+  if (fontLoads.length > 0) {
+    fontVars = '\n// 字体变量\n' + fontLoads.map((font, idx) => {
+      const varName = `font${idx}`
+      return `let ${varName} = null`
+    }).join('\n')
+
+    fontLoadLogic = '\n    // 加载字体\n' + fontLoads.map((font, idx) => {
+      const varName = `font${idx}`
+      return `    ${varName} = p.loadFont('${font.filename}')`
+    }).join('\n')
+  }
+
   // 生成setup函数体
-  let setupBody = `p.createCanvas(${width}, ${height});${imageLoadLogic}\n`
+  let setupBody = `p.createCanvas(${width}, ${height});${imageLoadLogic}${fontLoadLogic}\n`
   if (functions.setup) {
-    // 移除 setup 中的 loadImage 调用，因为已经在 imageLoadLogic 中处理了
+    // 移除 setup 中的 loadImage 和 loadFont 调用，因为已经在 imageLoadLogic 和 fontLoadLogic 中处理了
     const setupLines = functions.setup.body.split('\n')
       .filter(line => !line.trim().startsWith('size'))
       .filter(line => !line.trim().includes('loadImage'))  // 过滤掉 loadImage
+      .filter(line => !line.trim().includes('loadFont'))  // 过滤掉 loadFont
       .join('\n      ')
     if (setupLines.trim()) {
       setupBody += '    ' + transformFunctionName(setupLines)
@@ -344,6 +382,9 @@ ${classDefinitions}
 
 // 图片变量
 ${imageVars}
+
+// 字体变量
+${fontVars}
 
 const sketch = (p) => {
   // Setup

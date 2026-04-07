@@ -5,23 +5,64 @@
   "type": "module",
   "main": "dist/processing2vue.cjs.js",
   "module": "dist/processing2vue.esm.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/processing2vue.esm.js",
-      "require": "./dist/processing2vue.cjs.js"
+      "require": "./dist/processing2vue.cjs.js",
+      "types": "./dist/index.d.ts"
     }
+  },
+  "bin": {
+    "p2v": "./bin/cli.js"
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "vite build && npm run build:types",
+    "build:types": "tsc --declaration --emitDeclarationOnly",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint src/**/*.js",
+    "format": "prettier --write src/**/*.{js,ts}",
+    "prepublishOnly": "npm run build"
   },
-  "keywords": ["processing", "vue", "p5.js", "converter"],
+  "keywords": [
+    "processing",
+    "vue",
+    "p5.js",
+    "converter",
+    "creative-coding",
+    "generative-art",
+    "vue3",
+    "composition-api"
+  ],
+  "author": "yuyezhizhi",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yuyezhizhi/processing2vue.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yuyezhizhi/processing2vue/issues"
+  },
+  "homepage": "https://github.com/yuyezhizhi/processing2vue#readme",
   "dependencies": {
     "p5": "^1.9.0"
   },
   "devDependencies": {
-    "vite": "^5.0.0"
+    "@vitest/coverage-v8": "^1.0.0",
+    "typescript": "^5.0.0",
+    "vite": "^5.0.0",
+    "vitest": "^1.0.0"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=16.0.0"
   }
 }

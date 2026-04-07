@@ -1,0 +1,15 @@
+# 忽略的文件
+node_modules/
+dist/
+.DS_Store
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# 测试覆盖率
+coverage/
+
+# 构建产物
+*.local

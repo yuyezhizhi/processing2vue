@@ -27,12 +27,21 @@ jobs:
       - name: Copy TypeScript definitions
         run: cp src/index.d.ts dist/
 
+      - name: Debug - Check package
+        run: |
+          echo "=== Package info ==="
+          cat package.json | grep -E '"name"|"version"|"description"'
+          echo ""
+          echo "=== Dist contents ==="
+          ls -la dist/
+
       - name: Publish to npm
-        run: npm publish
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub Release
+        if: success()
         uses: softprops/action-gh-release@v1
         with:
           files: dist/**
